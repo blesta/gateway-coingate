@@ -11,20 +11,20 @@ Please note, that for Sandbox you must generate separate API credentials on <htt
 You can install library via [Composer](http://getcomposer.org/). Run the following command in your terminal:
 
 ```bash
-composer require coingate/coingate-php
+composer require blesta/coingate
 ```
 
 ## Manual Installation
 
-Donwload [latest release](https://github.com/coingate/coingate-php/releases) and include `init.php` file.
+Donwload [latest release](https://github.com/blesta/gateway-coingate/releases) and include `init.php` file.
 
 ```php
-require_once('/path/to/coingate-php/init.php');
+require_once('/path/to/coingate/init.php');
 ```
 
 ## Getting Started
 
-Usage of CoinGate PHP library.
+Usage of CoinGate library.
 
 ### Setting up CoinGate library
 
@@ -35,8 +35,8 @@ use CoinGate\CoinGate;
 
 \CoinGate\CoinGate::config(array(
   'environment' => 'sandbox', // sandbox OR live
-  'app_id'      => 'YOUR_APP_ID', 
-  'api_key'     => 'YOUR_API_KEY', 
+  'app_id'      => 'YOUR_APP_ID',
+  'api_key'     => 'YOUR_API_KEY',
   'api_secret'  => 'YOUR_API_SECRET'
 ));
 
