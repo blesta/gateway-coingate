@@ -1,6 +1,4 @@
 <?php
 namespace CoinGate;
 
-class Merchant
-{
-}
+class Merchant {}
