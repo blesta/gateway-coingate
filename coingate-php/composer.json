@@ -1,5 +1,5 @@
 {
-  "name": "blesta/coingate",
+  "name": "coingate/coingate-php",
   "type": "library",
   "description": "CoinGate library for PHP",
   "version": "2.0.1",
@@ -13,7 +13,7 @@
   "authors": [
     {
       "name": "CoinGate and contributors",
-      "homepage": "https://github.com/blesta/gateway-coingate/graphs/contributors"
+      "homepage": "https://github.com/coingate/coingate-php/graphs/contributors"
     }
   ],
   "require": {

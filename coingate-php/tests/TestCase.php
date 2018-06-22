@@ -11,11 +11,11 @@ class TestCase extends \PHPUnit_Framework_TestCase
 
     public static function getGoodAuthentication()
     {
-        return [
+        return array(
             'app_id'      => self::APP_ID,
             'api_key'     => self::API_KEY,
             'api_secret'  => self::API_SECRET,
             'environment' => self::ENVIRONMENT,
-        ];
+        );
     }
 }
