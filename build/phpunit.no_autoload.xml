@@ -1,6 +1,6 @@
 <phpunit bootstrap="tests/bootstrap.no_autoload.php" colors="true">
     <testsuites>
-        <testsuite name="CoinGate PHP Test Suite">
+        <testsuite name="CoinGate Test Suite">
             <directory suffix="Test.php">tests</directory>
         </testsuite>
     </testsuites>

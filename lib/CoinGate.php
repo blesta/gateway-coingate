@@ -6,24 +6,24 @@ class CoinGate
     const VERSION           = '2.0.1';
     const USER_AGENT_ORIGIN = 'CoinGate PHP Library';
 
-    public static $app_id      = '';
-    public static $api_key     = '';
-    public static $api_secret  = '';
+    public static $appID      = '';
+    public static $apiKey     = '';
+    public static $apiSecret  = '';
     public static $environment = 'live';
-    public static $user_agent  = '';
+    public static $userAgent  = '';
 
     public static function config($authentication)
     {
         if (isset($authentication['app_id'])) {
-            self::$app_id = $authentication['app_id'];
+            self::$appID = $authentication['app_id'];
         }
 
         if (isset($authentication['api_key'])) {
-            self::$api_key = $authentication['api_key'];
+            self::$apiKey = $authentication['api_key'];
         }
 
         if (isset($authentication['api_secret'])) {
-            self::$api_secret = $authentication['api_secret'];
+            self::$apiSecret = $authentication['api_secret'];
         }
 
         if (isset($authentication['environment'])) {
@@ -31,7 +31,7 @@ class CoinGate
         }
 
         if (isset($authentication['user_agent'])) {
-            self::$user_agent = $authentication['user_agent'];
+            self::$userAgent = $authentication['user_agent'];
         }
     }
 
@@ -48,16 +48,16 @@ class CoinGate
 
     public static function request($url, $method = 'POST', $params = [], $authentication = [])
     {
-        $app_id      = isset($authentication['app_id']) ? $authentication['app_id'] : self::$app_id;
-        $app_key     = isset($authentication['api_key']) ? $authentication['api_key'] : self::$api_key;
-        $app_secret  = isset($authentication['api_secret']) ? $authentication['api_secret'] : self::$api_secret;
+        $appID      = isset($authentication['app_id']) ? $authentication['app_id'] : self::$appID;
+        $apiKey     = isset($authentication['api_key']) ? $authentication['api_key'] : self::$apiKey;
+        $apiSecret  = isset($authentication['api_secret']) ? $authentication['api_secret'] : self::$apiSecret;
         $environment = isset($authentication['environment']) ? $authentication['environment'] : self::$environment;
-        $user_agent  = isset($authentication['user_agent'])
+        $userAgent  = isset($authentication['user_agent'])
             ? $authentication['user_agent']
-            : (isset(self::$user_agent) ? self::$user_agent : (self::USER_AGENT_ORIGIN . ' v' . self::VERSION));
+            : (isset(self::$userAgent) ? self::$userAgent : (self::USER_AGENT_ORIGIN . ' v' . self::VERSION));
 
         # Check if credentials was passed
-        if (empty($app_id) || empty($app_key) || empty($app_secret)) {
+        if (empty($appID) || empty($apiKey) || empty($apiSecret)) {
             \CoinGate\Exception::throwException(400, ['reason' => 'CredentialsMissing']);
         }
 
@@ -80,37 +80,37 @@ class CoinGate
                 : 'https://api.coingate.com/v1'
             ) . $url;
         $nonce     = (int)(microtime(true) * 1e6);
-        $message   = $nonce . $app_id . $app_key;
-        $signature = hash_hmac('sha256', $message, $app_secret);
+        $message   = $nonce . $appID . $apiKey;
+        $signature = hash_hmac('sha256', $message, $apiSecret);
         $headers   = [];
-        $headers[] = 'Access-Key: ' . $app_key;
+        $headers[] = 'Access-Key: ' . $apiKey;
         $headers[] = 'Access-Nonce: ' . $nonce;
         $headers[] = 'Access-Signature: ' . $signature;
         $curl      = curl_init();
 
-        $curl_options = [
+        $curlOptions = [
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_URL            => $url
         ];
 
         if ($method == 'POST') {
             $headers[] = 'Content-Type: application/x-www-form-urlencoded';
-            array_merge($curl_options, [CURLOPT_POST => 1]);
+            array_merge($curlOptions, [CURLOPT_POST => 1]);
             curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($params));
         }
 
-        curl_setopt_array($curl, $curl_options);
+        curl_setopt_array($curl, $curlOptions);
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($curl, CURLOPT_USERAGENT, $user_agent);
+        curl_setopt($curl, CURLOPT_USERAGENT, $userAgent);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 
         $response    = json_decode(curl_exec($curl), true);
-        $http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        $httpStatus = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
-        if ($http_status === 200) {
+        if ($httpStatus === 200) {
             return $response;
         } else {
-            \CoinGate\Exception::throwException($http_status, $response);
+            \CoinGate\Exception::throwException($httpStatus, $response);
         }
     }
 }

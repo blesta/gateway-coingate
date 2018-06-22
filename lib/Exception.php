@@ -19,11 +19,11 @@ class Exception
         return $reason . ' ' . $message;
     }
 
-    public static function throwException($http_status, $error)
+    public static function throwException($httpStatus, $error)
     {
         $reason = $error['reason'];
 
-        switch ($http_status) {
+        switch ($httpStatus) {
             case 400:
                 switch ($reason) {
                     case 'CredentialsMissing':
