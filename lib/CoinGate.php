@@ -14,26 +14,31 @@ class CoinGate
 
     public static function config($authentication)
     {
-        if (isset($authentication['app_id']))
+        if (isset($authentication['app_id'])) {
             self::$app_id = $authentication['app_id'];
+        }
 
-        if (isset($authentication['api_key']))
+        if (isset($authentication['api_key'])) {
             self::$api_key = $authentication['api_key'];
+        }
 
-        if (isset($authentication['api_secret']))
+        if (isset($authentication['api_secret'])) {
             self::$api_secret = $authentication['api_secret'];
+        }
 
-        if (isset($authentication['environment']))
+        if (isset($authentication['environment'])) {
             self::$environment = $authentication['environment'];
+        }
 
-        if (isset($authentication['user_agent']))
+        if (isset($authentication['user_agent'])) {
             self::$user_agent = $authentication['user_agent'];
+        }
     }
 
-    public static function testConnection($authentication = array())
+    public static function testConnection($authentication = [])
     {
         try {
-            self::request('/auth/test', 'GET', array(), $authentication);
+            self::request('/auth/test', 'GET', [], $authentication);
 
             return true;
         } catch (\Exception $e) {
@@ -41,58 +46,71 @@ class CoinGate
         }
     }
 
-    public static function request($url, $method = 'POST', $params = array(), $authentication = array())
+    public static function request($url, $method = 'POST', $params = [], $authentication = [])
     {
         $app_id      = isset($authentication['app_id']) ? $authentication['app_id'] : self::$app_id;
         $app_key     = isset($authentication['api_key']) ? $authentication['api_key'] : self::$api_key;
         $app_secret  = isset($authentication['api_secret']) ? $authentication['api_secret'] : self::$api_secret;
         $environment = isset($authentication['environment']) ? $authentication['environment'] : self::$environment;
-        $user_agent  = isset($authentication['user_agent']) ? $authentication['user_agent'] : (isset(self::$user_agent) ? self::$user_agent : (self::USER_AGENT_ORIGIN . ' v' . self::VERSION));
+        $user_agent  = isset($authentication['user_agent'])
+            ? $authentication['user_agent']
+            : (isset(self::$user_agent) ? self::$user_agent : (self::USER_AGENT_ORIGIN . ' v' . self::VERSION));
 
         # Check if credentials was passed
-        if (empty($app_id) || empty($app_key) || empty($app_secret))
-            \CoinGate\Exception::throwException(400, array('reason' => 'CredentialsMissing'));
+        if (empty($app_id) || empty($app_key) || empty($app_secret)) {
+            \CoinGate\Exception::throwException(400, ['reason' => 'CredentialsMissing']);
+        }
 
         # Check if right environment passed
-        $environments = array('live', 'sandbox');
+        $environments = ['live', 'sandbox'];
 
         if (!in_array($environment, $environments)) {
             $availableEnvironments = join(', ', $environments);
-            \CoinGate\Exception::throwException(400, array('reason' => 'BadEnvironment', 'message' => "Environment does not exist. Available environments: $availableEnvironments"));
+            \CoinGate\Exception::throwException(
+                400,
+                [
+                    'reason' => 'BadEnvironment',
+                    'message' => 'Environment does not exist. Available environments: ' . $availableEnvironments
+                ]
+            );
         }
 
-        $url       = ($environment === 'sandbox' ? 'https://api-sandbox.coingate.com/v1' : 'https://api.coingate.com/v1') . $url;
+        $url = ($environment === 'sandbox'
+                ? 'https://api-sandbox.coingate.com/v1'
+                : 'https://api.coingate.com/v1'
+            ) . $url;
         $nonce     = (int)(microtime(true) * 1e6);
         $message   = $nonce . $app_id . $app_key;
         $signature = hash_hmac('sha256', $message, $app_secret);
-        $headers   = array();
+        $headers   = [];
         $headers[] = 'Access-Key: ' . $app_key;
         $headers[] = 'Access-Nonce: ' . $nonce;
         $headers[] = 'Access-Signature: ' . $signature;
         $curl      = curl_init();
 
-        $curl_options = array(
+        $curl_options = [
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_URL            => $url
-        );
+        ];
 
         if ($method == 'POST') {
             $headers[] = 'Content-Type: application/x-www-form-urlencoded';
-            array_merge($curl_options, array(CURLOPT_POST => 1));
+            array_merge($curl_options, [CURLOPT_POST => 1]);
             curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($params));
         }
 
         curl_setopt_array($curl, $curl_options);
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($curl, CURLOPT_USERAGENT, $user_agent);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 
-        $response    = json_decode(curl_exec($curl), TRUE);
+        $response    = json_decode(curl_exec($curl), true);
         $http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
-        if ($http_status === 200)
+        if ($http_status === 200) {
             return $response;
-        else
+        } else {
             \CoinGate\Exception::throwException($http_status, $response);
+        }
     }
 }
