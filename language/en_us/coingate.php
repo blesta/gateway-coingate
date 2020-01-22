@@ -1,5 +1,6 @@
 <?php
 $lang['Coingate.name'] = 'CoinGate.com';
+$lang['Coingate.description'] = 'Pay with Bitcoin or Altcoins via CoinGate.com';
 $lang['Coingate.app_id'] = 'APP ID';
 $lang['Coingate.api_key'] = 'API Key';
 $lang['Coingate.api_secret'] = 'API Secret';
