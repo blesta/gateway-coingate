@@ -1,7 +1,7 @@
 {
-	"version": "1.1.0",
+	"version": "1.2.0",
 	"name": "Coingate.name",
-	"description": "Pay with Bitcoin or Altcoins via CoinGate.com",
+	"description": "Coingate.description",
 	"authors": [
 		{
 			"name": "Coingate",
@@ -15,5 +15,6 @@
     "currencies": ["EUR", "GBP", "USD", "BTC", "PLN", "CZK", "SEK", "NOK",
         "DKK", "CHF", "ZAR", "AUD", "JPY", "BRL", "CAD",  "CNY", "HKD", "HUF",
         "INR", "RUB", "ILS", "MYR", "MXN", "SGD", "RON", "VEF", "IDR", "PHP",
-        "ARS", "THB", "NGN", "COP", "PKR", "AED", "UAH", "BGN"]
+        "ARS", "THB", "NGN", "COP", "PKR", "AED", "UAH", "BGN"],
+    "signup_url": "https://coingate.com/sign_up"
 }
