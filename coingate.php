@@ -121,7 +121,7 @@ class Coingate extends NonmerchantGateway
     {
         Loader::load(dirname(__FILE__) . DS . 'init.php');
 
-        $clientId = $this->ifSet($contactInfo['client_id']);
+        $clientId = (isset($contactInfo['client_id']) ? $contactInfo['client_id'] : null);
 
         if (isset($invoiceAmounts) && is_array($invoiceAmounts)) {
             $invoices = $this->serializeInvoices($invoiceAmounts);
@@ -135,21 +135,21 @@ class Coingate extends NonmerchantGateway
 
         $callbackURL = Configure::get('Blesta.gw_callback_url')
             . Configure::get('Blesta.company_id') . '/coingate/?client_id='
-            . $this->ifSet($contactInfo['client_id']) . '&token=' . $token;
+            . (isset($contactInfo['client_id']) ? $contactInfo['client_id'] : null) . '&token=' . $token;
 
         $testMode = $this->coingateEnvironment();
 
         $postParams = [
             'order_id'         => $orderId,
-            'price'            => $this->ifSet($amount),
-            'description'      => $this->ifSet($options['description']),
-            'title'            => $companyName->name . ' ' . $this->ifSet($options['description']),
+            'price'            => (isset($amount) ? $amount : null),
+            'description'      => (isset($options['description']) ? $options['description'] : null),
+            'title'            => $companyName->name . ' ' . (isset($options['description']) ? $options['description'] : null),
             'token'            => $token,
-            'currency'         => $this->ifSet($this->currency),
+            'currency'         => (isset($this->currency) ? $this->currency : null),
             'receive_currency' => $this->meta['receive_currency'],
             'callback_url'     => $callbackURL,
-            'cancel_url'       => $this->ifSet($options['return_url']),
-            'success_url'      => $this->ifSet($options['return_url']),
+            'cancel_url'       => (isset($options['return_url']) ? $options['return_url'] : null),
+            'success_url'      => (isset($options['return_url']) ? $options['return_url'] : null),
         ];
 
         $order = \CoinGate\Merchant\Order::create(
@@ -176,13 +176,13 @@ class Coingate extends NonmerchantGateway
      */
     public function validate(array $get, array $post)
     {
-        $this->log($this->ifSet($_SERVER['REQUEST_URI']), serialize($post), 'output', true);
+        $this->log((isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : null), serialize($post), 'output', true);
 
-        $dataParts = explode('@', $this->ifSet($post['order_id']), 2);
+        $dataParts = explode('@', (isset($post['order_id']) ? $post['order_id'] : null), 2);
 
         $clientId = $dataParts[0];
 
-        $invoices = $this->ifSet($dataParts[1]);
+        $invoices = (isset($dataParts[1]) ? $dataParts[1] : null);
 
         if (is_numeric($invoices)) {
             $invoices = null;
@@ -193,7 +193,7 @@ class Coingate extends NonmerchantGateway
 
         if (empty($get['token']) || strcmp($get['token'], $token) !== 0) {
             $errorMessage = 'CoinGate Token: ' . $get['token'] . ' is not valid';
-            $this->log($this->ifSet($_SERVER['REQUEST_URI']), $errorMessage, 'output', true);
+            $this->log((isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : null), $errorMessage, 'output', true);
             throw new Exception($errorMessage);
         }
 
@@ -201,11 +201,11 @@ class Coingate extends NonmerchantGateway
 
         return [
             'client_id'      => $clientId,
-            'amount'         => $this->ifSet($post['price']),
-            'currency'       => $this->ifSet($post['currency']),
+            'amount'         => (isset($post['price']) ? $post['price'] : null),
+            'currency'       => (isset($post['currency']) ? $post['currency'] : null),
             'status'         => $status,
             'reference_id'   => null,
-            'transaction_id' => $this->ifSet($post['id']),
+            'transaction_id' => (isset($post['id']) ? $post['id'] : null),
             'invoices'       => $this->unserializeInvoices($invoices),
         ];
     }
@@ -215,11 +215,11 @@ class Coingate extends NonmerchantGateway
      */
     public function success(array $get, array $post)
     {
-        $dataParts = explode('@', $this->ifSet($post['order_id']), 2);
+        $dataParts = explode('@', (isset($post['order_id']) ? $post['order_id'] : null), 2);
 
         $clientId = $dataParts[0];
 
-        $invoices = $this->ifSet($dataParts[1]);
+        $invoices = (isset($dataParts[1]) ? $dataParts[1] : null);
 
         if (is_numeric($invoices)) {
             $invoices = null;
@@ -230,7 +230,7 @@ class Coingate extends NonmerchantGateway
 
         if (empty($get['token']) || strcmp($get['token'], $token) !== 0) {
             $errorMessage = 'CoinGate Token: ' . $get['token'] . ' is not valid';
-            $this->log($this->ifSet($_SERVER['REQUEST_URI']), $errorMessage, 'output', true);
+            $this->log((isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : null), $errorMessage, 'output', true);
             throw new Exception($errorMessage);
         }
 
@@ -238,10 +238,10 @@ class Coingate extends NonmerchantGateway
 
         return [
             'client_id'      => $clientId,
-            'amount'         => $this->ifSet($post['price']),
-            'currency'       => $this->ifSet($post['currency']),
+            'amount'         => (isset($post['price']) ? $post['price'] : null),
+            'currency'       => (isset($post['currency']) ? $post['currency'] : null),
             'status'         => $status,
-            'transaction_id' => $this->ifSet($post['id']),
+            'transaction_id' => (isset($post['id']) ? $post['id'] : null),
             'invoices'       => $this->unserializeInvoices($invoices),
         ];
     }
