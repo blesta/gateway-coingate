@@ -3,6 +3,7 @@
 namespace CoinGate;
 
 use Blesta\Core\Util\Common\Traits\Container;
+use \Configure;
 
 class CoinGate
 {
@@ -55,7 +56,8 @@ class CoinGate
     public static function request($url, $method = 'POST', $params = [], $authentication = [])
     {
         // Initialize logger
-        $logger = self::getFromContainer('logger');
+        $self_object = new self();
+        $logger = $self_object->getFromContainer('logger');
 
         $appID = isset($authentication['app_id']) ? $authentication['app_id'] : self::$appID;
         $apiKey = isset($authentication['api_key']) ? $authentication['api_key'] : self::$apiKey;
