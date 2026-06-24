@@ -1,5 +1,5 @@
 {
-    "version": "2.0.0",
+    "version": "2.0.1",
     "name": "Coingate.name",
     "description": "Coingate.description",
     "authors": [
@@ -50,5 +50,9 @@
         "UAH",
         "BGN"
     ],
-    "signup_url": "https://coingate.com/sign_up"
+    "signup_url": "https://coingate.com/sign_up",
+    "logo": {
+        "light": "views/default/images/logo.svg",
+        "dark": "views/default/images/logo-dark.svg"
+    }
 }
