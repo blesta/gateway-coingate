@@ -10,7 +10,7 @@ class CoinGate
     // Load traits
     use Container;
 
-    const VERSION = '2.0.1';
+    const VERSION = '2.0.2';
     const USER_AGENT_ORIGIN = 'CoinGate PHP Library';
 
     public static $appID = '';
