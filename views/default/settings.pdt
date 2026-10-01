@@ -1,20 +1,20 @@
-
+<?php
+if (!empty($show_v2_notice)) {
+?>
+<div class="alert alert-warning"><i class="bi bi-exclamation-triangle-fill me-1"></i> <?php $this->_('Coingate.warning_v2_auth_token');?></div>
+<?php
+}
+?>
 <div class="mb-3">
     <?php
-    $this->Form->label($this->_('Coingate.app_id', true), 'app_id', ['class' => 'form-label']);
-    $this->Form->fieldText('app_id', (isset($meta['app_id']) ? $meta['app_id'] : null), ['id' => 'app_id', 'class' => 'form-control']);
-    ?>
-</div>
-<div class="mb-3">
-    <?php
-    $this->Form->label($this->_('Coingate.api_key', true), 'api_key', ['class' => 'form-label']);
-    $this->Form->fieldText('api_key', (isset($meta['api_key']) ? $meta['api_key'] : null), ['id' => 'api_key', 'class' => 'form-control']);
-    ?>
-</div>
-<div class="mb-3">
-    <?php
-    $this->Form->label($this->_('Coingate.api_secret', true), 'api_secret', ['class' => 'form-label']);
-    $this->Form->fieldText('api_secret', (isset($meta['api_secret']) ? $meta['api_secret'] : null), ['id' => 'api_secret', 'class' => 'form-control']);
+    $this->Form->label($this->_('Coingate.auth_token', true), 'auth_token', ['class' => 'form-label']);
+    $this->Form->fieldText('auth_token', (isset($meta['auth_token']) ? $meta['auth_token'] : null), ['id' => 'auth_token', 'class' => 'form-control']);
+    // Preserve the legacy API v1 credentials
+    foreach (['app_id', 'api_key', 'api_secret'] as $legacy_field) {
+        if (isset($meta[$legacy_field])) {
+            $this->Form->fieldHidden($legacy_field, $meta[$legacy_field]);
+        }
+    }
     ?>
 </div>
 <div class="mb-3">

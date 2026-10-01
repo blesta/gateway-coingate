@@ -10,27 +10,17 @@ class CoinGate
     // Load traits
     use Container;
 
-    const VERSION = '2.0.1';
+    const VERSION = '2.1.0';
     const USER_AGENT_ORIGIN = 'CoinGate PHP Library';
 
-    public static $appID = '';
-    public static $apiKey = '';
-    public static $apiSecret = '';
+    public static $authToken = '';
     public static $environment = 'live';
     public static $userAgent = '';
 
     public static function config($authentication)
     {
-        if (isset($authentication['app_id'])) {
-            self::$appID = $authentication['app_id'];
-        }
-
-        if (isset($authentication['api_key'])) {
-            self::$apiKey = $authentication['api_key'];
-        }
-
-        if (isset($authentication['api_secret'])) {
-            self::$apiSecret = $authentication['api_secret'];
+        if (isset($authentication['auth_token'])) {
+            self::$authToken = $authentication['auth_token'];
         }
 
         if (isset($authentication['environment'])) {
@@ -59,14 +49,12 @@ class CoinGate
         $self_object = new self();
         $logger = $self_object->getFromContainer('logger');
 
-        $appID = isset($authentication['app_id']) ? $authentication['app_id'] : self::$appID;
-        $apiKey = isset($authentication['api_key']) ? $authentication['api_key'] : self::$apiKey;
-        $apiSecret = isset($authentication['api_secret']) ? $authentication['api_secret'] : self::$apiSecret;
+        $authToken = isset($authentication['auth_token']) ? $authentication['auth_token'] : self::$authToken;
         $environment = isset($authentication['environment']) ? $authentication['environment'] : self::$environment;
         $userAgent = isset($authentication['user_agent']) ? $authentication['user_agent'] : (isset(self::$userAgent) ? self::$userAgent : (self::USER_AGENT_ORIGIN . ' v' . self::VERSION));
 
         # Check if credentials was passed
-        if (empty($appID) || empty($apiKey) || empty($apiSecret)) {
+        if (empty($authToken)) {
             \CoinGate\Exception::throwException(400, ['reason' => 'CredentialsMissing']);
         }
 
@@ -81,14 +69,9 @@ class CoinGate
                 ]);
         }
 
-        $url = ($environment === 'sandbox' ? 'https://api-sandbox.coingate.com/v1' : 'https://api.coingate.com/v1') . $url;
-        $nonce = (int) (microtime(true) * 1e6);
-        $message = $nonce . $appID . $apiKey;
-        $signature = hash_hmac('sha256', $message, $apiSecret);
+        $url = ($environment === 'sandbox' ? 'https://api-sandbox.coingate.com/api/v2' : 'https://api.coingate.com/api/v2') . $url;
         $headers = [];
-        $headers[] = 'Access-Key: ' . $apiKey;
-        $headers[] = 'Access-Nonce: ' . $nonce;
-        $headers[] = 'Access-Signature: ' . $signature;
+        $headers[] = 'Authorization: Token ' . $authToken;
         $curl = curl_init();
 
         $curlOptions = [
