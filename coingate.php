@@ -228,34 +228,9 @@ class Coingate extends NonmerchantGateway
      */
     public function success(array $get, array $post)
     {
-        $dataParts = explode('@', (isset($post['order_id']) ? $post['order_id'] : null), 2);
-
-        $clientId = $dataParts[0];
-
-        $invoices = (isset($dataParts[1]) ? $dataParts[1] : null);
-
-        if (is_numeric($invoices)) {
-            $invoices = null;
-        }
-
-        $orderId = $post['order_id'];
-        $token = md5($orderId);
-
-        if (empty($get['token']) || strcmp($get['token'], $token) !== 0) {
-            $errorMessage = 'CoinGate Token: ' . $get['token'] . ' is not valid';
-            $this->log((isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : null), $errorMessage, 'output', true);
-            throw new Exception($errorMessage);
-        }
-
-        $status = $this->statusChecking($post['id']);
-
         return [
-            'client_id'      => $clientId,
-            'amount'         => (isset($post['price_amount']) ? $post['price_amount'] : null),
-            'currency'       => (isset($post['price_currency']) ? $post['price_currency'] : null),
-            'status'         => $status,
-            'transaction_id' => (isset($post['id']) ? $post['id'] : null),
-            'invoices'       => $this->unserializeInvoices($invoices),
+            'client_id' => (isset($get['client_id']) ? $get['client_id'] : null),
+            'status'    => 'pending',
         ];
     }
 
